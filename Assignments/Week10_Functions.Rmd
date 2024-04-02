@@ -40,7 +40,12 @@ The braces indicate that the lines of code are a group that gets run together.
 Let's write out our first function. We want to calculate shrub volumes.
 
 ```{r}
-
+# calculate a volume
+calc_volume <- function(length, width, height) {
+  area <- length*width
+  volume <- area*height
+  return(volume)
+}
 ```
 
 It is important to note that writing the function does not create the function. We have to remember to run the code to create the function and add it to our environment.
@@ -50,13 +55,15 @@ When we run this code chunk above, we can see that the function gets added to ou
 Let's use our new function.
 
 ```{r}
-
+# length 2, width 4, height 3.5
+calc_volume(length = 2, width = 4, height = 3.5)
+calc_volume(2, 4, 3.5)
 ```
 
 As with other functions, we can store the output as an object to use later.
 
 ```{r}
-
+first_volume <- calc_volume(2, 4, 3.5)
 ```
 
 #### Let's Practice!
@@ -74,7 +81,8 @@ Similarly, the only thing our environment know about the function is the output 
 So, in the function above, we can't "access" variables or arguments that are created within the function. The function exists within it's own environment, so to speak.
 
 ```{r eval=FALSE}
-
+volume
+width
 ```
 
 #### Let's Practice!
@@ -88,7 +96,17 @@ As with many of the functions that we have already used in this class, we can se
 For example, if many of our shrubs are the same height, we could specify that the default height should be 1.
 
 ```{r}
+# calculate a volume
+calc_volume <- function(length, width, height= 2) {
+  area <- length*width
+  volume <- area*height
+  return(volume)
+}
 
+# length 0.8, width, 1.6
+calc_volume(0.8, 1.6)
+calc_volume(0.8, 1.6, 2)
+calc_volume(0.8, 1.6, 4)
 ```
 
 ### Combining Functions
@@ -96,13 +114,24 @@ For example, if many of our shrubs are the same height, we could specify that th
 Again, as with other functions, we can combine functions of our own creation together.
 
 ```{r}
+calc_mass_from_volume <- function(volume) {
+  mass <- 2.65 * volume^0.9
+  return(mass)
+}
+calc_mass_from_volume(4)
 
+shrub_vol <- calc_volume(0.8, 1.6)
+shrub_mass <- calc_mass_from_volume(shrub_vol)
 ```
 
 We can also use pipes with our own functions. The output from the first function becomes the first argument for the second function.
 
 ```{r}
+library(dplyr)
 
+shrub_mass <- calc_volume(0.8, 1.6) %>% 
+  calc_mass_from_volume()
+shrub_mass
 ```
 
 ### Using the `tidyverse` in Functions
@@ -118,13 +147,22 @@ If we try to use `tidyverse` functions the way we normally would within our func
 First, let's load our packages and get some data from Palmer Penguins.
 
 ```{r}
+library(palmerpenguins)
+library(ggplot2)
 
+penguins <- penguins
 ```
 
 Now, let's write some code for a ggplot within a function as we normally would.
 
 ```{r eval = FALSE}
+make_hist <- function(df, column, label_x) {
+  ggplot(df, aes(x=column)) +
+    geom_histogram() +
+    labs(x = label_x)
+}
 
+make_hist(penguins, body_mass_g, "Body Mass (g)")
 ```
 
 To fix this issue, we have to tell our code which inputs/arguments are this special type of data variable.
@@ -132,7 +170,14 @@ To fix this issue, we have to tell our code which inputs/arguments are this spec
 We can do this by "embracing" them in double braces. This tells the function to treat them in the "tidy evaluation" method.
 
 ```{r}
+make_hist <- function(df, column, label_x, fill_col) {
+  ggplot(df, aes(x = {{column}}, fill = {{fill_col}})) +
+    geom_histogram() +
+    labs(x = label_x)
+}
 
+make_hist(penguins, body_mass_g, "Body Mass (g)", species)
+make_hist(penguins, flipper_length_mm, "Flipper Length (mm)")
 ```
 
 ### Code Design with Functions
