@@ -55,14 +55,50 @@ dna2 <- "attattaggaacaca"
 Use them to print whether or not the following statements are `TRUE` or `FALSE`.
 
 a.  `w` is greater than 10
+```{r}
+w > 10
+```
+
 b.  `"green"` is in `colors`
+```{r}
+"green" %in% colors
+```
+
 c.  `x` is greater than `y`
+```{r}
+x > y
+```
+
 d.  Each value in `masses` is greater than 40.
+```{r}
+masses > 40
+```
+
 e.  `dna1` is the same as `dna2`
+```{r}
+dna1 %in% dna2
+```
+
 f.  `dna1` is not the same as `dna2`
+```{r}
+!(dna1 %in% dna2)
+```
+
 g.  `w` is greater than `x`, or `y` is greater than `z`
+```{r}
+w > x | y > z
+```
+
 h.  `x` times `w` is between 13.2 and 13.5
+```{r}
+13.5 > x*w & x*w > 13.2
+```
+
 i.  Each mass in `masses` is between 30 and 50.
+```{r}
+30 < masses & masses < 50
+```
+
 
 ### 2. If Statements (20 points)
 
@@ -70,8 +106,8 @@ a.  Complete the following `if` statement so that if `age_class` is equal to "sa
 
 ```{r}
 age_class = "sapling"
-if (){
-  
+if (age_class == "sapling"){
+  y <- 10
 }
 y
 ```
@@ -79,9 +115,11 @@ y
 b.  Complete the following `if` statement so that if `age_class` is equal to "sapling" it sets `y <- 10` and if `age_class` is equal to "seedling" it sets `y <- 5`.
 
 ```{r}
-age_class = "seedling"
-if (){
-  
+age_class = "sapling"
+if (age_class == "sapling"){
+  y <- 10
+} else if (age_class == "seedling") {
+  y <- 5
 }
 y
 ```
@@ -90,13 +128,31 @@ c.  Complete the following `if` statement so that if `age_class` is equal to "sa
 
 ```{r}
 age_class = "adult"
-if (){
-  
+if (age_class == "sapling"){
+  y <- 10
+} else if (age_class == "seedling") {
+  y <- 5
+} else {
+  y <- 0
 }
 y
 ```
 
 d.  Convert your conditional statement from (c) into a function that takes `age_class` as an argument and returns `y`. Call this function 5 times, once with each of the following values for `age_class`: "sapling", "seedling", "adult", "mature", "established".
+```{r}
+est_y <- function(age_class) {
+    if (age_class == "sapling"){
+    y <- 10
+  } else if (age_class == "seedling") {
+    y <- 5
+  } else {
+    y <- 0
+  }
+  return(y)
+}
+est_y("established")
+```
+
 
 ### 3. If Statements in Functions (20 points)
 
