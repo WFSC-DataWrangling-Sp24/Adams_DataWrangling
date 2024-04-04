@@ -115,7 +115,7 @@ y
 b.  Complete the following `if` statement so that if `age_class` is equal to "sapling" it sets `y <- 10` and if `age_class` is equal to "seedling" it sets `y <- 5`.
 
 ```{r}
-age_class = "sapling"
+age_class = "seedling"
 if (age_class == "sapling"){
   y <- 10
 } else if (age_class == "seedling") {
@@ -140,6 +140,8 @@ y
 
 d.  Convert your conditional statement from (c) into a function that takes `age_class` as an argument and returns `y`. Call this function 5 times, once with each of the following values for `age_class`: "sapling", "seedling", "adult", "mature", "established".
 ```{r}
+age_class <- "sapling"
+
 est_y <- function(age_class) {
     if (age_class == "sapling"){
     y <- 10
@@ -150,6 +152,10 @@ est_y <- function(age_class) {
   }
   return(y)
 }
+est_y("sapling")
+est_y("seedling")
+est_y("adult")
+est_y("mature")
 est_y("established")
 ```
 
@@ -157,10 +163,50 @@ est_y("established")
 ### 3. If Statements in Functions (20 points)
 
 a.  Write a function named `double_if_small` that takes a number as input and returns the number multiplied by 2 if the input is less than 26 and returns just the number (not multiplied by two) if the input is greater than or equal to 26. Call the function with `10` as the input.
+```{r}
+double_if_small <- function(x) {
+  if (x < 26) {
+    x <- x*2
+  } else if (x >= 26) {
+    x
+  }
+  return(x)
+}
+
+double_if_small(10)
+```
+
 b.  Call the function from (a) with `30` as the input.
+```{r}
+double_if_small(30)
+```
+
 c.  Write a function called `prediction` that takes a single argument `x`. If `x` is both greater than 0 and less than 15 then return `y = 6 + 0.8 * x`. If `x` is both greater than 15 and less than 30 then return `y = 5 + 0.75 * x`. In all other cases return `y = NA`. Call the function with `5` as the input.
+```{r}
+prediction <- function(x) {
+  if (x > 0 & x < 15) {
+    y = 6 + 0.8 * x
+  } else if (x > 15 & x < 30) {
+    y = 5 + 0.75 * x
+  } else {
+    y = NA
+  }
+  return(y)
+}
+
+prediction(5)
+```
+
 d.  Call the function from (c) with `26` as the input.
+```{r}
+prediction(26)
+```
+
 e.  Call the function from (c) with `-2` as the input.
+```{r}
+prediction(-2)
+```
+
 
 ### 4. Size Estimates by Name (20 points)
 
@@ -180,7 +226,38 @@ Create a new function `get_mass_from_length_by_name()` that takes two arguments,
 
 If the name is not any of these values the function should return `NA`.
 
+```{r}
+get_mass_from_length_by_name <- function(length, name) {
+  if (name == "Stegosauria") {
+    mass = 10.95 * length ^ 2.64
+  } else if(name == "Theropoda") {
+    mass = 0.73 * length ^ 3.63
+  } else if(name == "Sauropoda") {
+    mass = 214.44 * length ^ 1.46
+  } else {
+    mass = NA
+  }
+  return(mass)
+}
+
+```
+
+
 Run the function for: a. A *Stegosauria* that is 10 meters long. b. A *Theropoda* that is 8 meters long. c. A *Sauropoda* that is 12 meters long. d. A *Ankylosauria* that is 13 meters long.
+
+```{r}
+get_mass_from_length_by_name(10, "Stegosauria")
+```
+```{r}
+get_mass_from_length_by_name(8, "Theropoda")
+```
+```{r}
+get_mass_from_length_by_name(12, "Sauropoda")
+```
+```{r}
+get_mass_from_length_by_name(13, "Ankylosauria")
+```
+
 
 ### 5. Using `dplyr` Choice Functions (20 points)
 
@@ -190,16 +267,60 @@ First, create an object called `crab_size` and assign the value 17 to it.
 
 a.  Write an `if` statement using the `if_else` function from `dplyr` that says that a crab that is larger than or equal to 20 is "large" and a crab that is smaller than 20 is "small."
 
+```{r}
+library(tidyverse)
+library(lterdatasampler)
+
+crab_size <- 17
+
+if_else(crab_size >= 20, "large", "small")
+```
+
+
 b.  Make sure that your `crab_size` object is set to 17 (if you overwrote it in (a)).
 
     This time, write a set of nested `if_else` functions that say that if a crab is greater than or equal to 20, it is "large;" if greater than or equal to 10 but less than 20, it is "medium;" and if it is smaller than 10, it is "small."
+    
+```{r}
+
+if_else(crab_size >= 20, "large",
+        if_else(crab_size >= 10 & crab_size < 20, "medium", if_else(crab_size < 10, "small", NA)))
+```
+    
 
 c.  Use the `case_when` function to perform the same task as (b). Again, set the `crab_size` object to 17, as needed.
+
+```{r}
+case_when(crab_size >= 20 ~ "large",
+          crab_size >= 10 & crab_size < 20 ~ "medium",
+          crab_size < 10 ~ "small", 
+          TRUE ~ NA)
+```
+
 
 d.  Take a look at the `pie_crab` dataset from the `lterdatasampler` package by running `head(pie_crab)`. We want to create a new column based on the `size` column. Using the `if_else` function inside of a `mutate` function, create a new column called `size_category` based on the same conditions as (a).
 
     I've placed my new column next to the size column for the sake of the answer key; you don't need to do this.
+    
+```{r}
+pie_crab <- pie_crab
+head(pie_crab)
+
+pie_crab %>% 
+  mutate(size_category = if_else(size >= 20, "large", "small"))
+
+```
+    
 
 e.  Now use the `case_when` function inside a `mutate` function to create a new column called `size_category3` in the `pie_crab` dataframe that meets the same conditions as (b) and (c).
 
     I've placed my new column next to the size column for the sake of the answer key; you don't need to do this.
+    
+```{r}
+pie_crab %>% 
+  mutate(size_category3 = case_when(size >= 20 ~ "large",
+          size >= 10 & crab_size < 20 ~ "medium",
+          size < 10 ~ "small", 
+          TRUE ~ NA))
+```
+    
