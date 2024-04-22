@@ -299,7 +299,7 @@ You can click through the options and it will display the different palettes.
 For our purposes, the Yellow-Orange-Brown palette ("YlOrBr") should work well. 
 To see the name of the palette, look just to the left of the "EXPORT" tab:
 
-![Example of palette name in ColorBrewer, YlOrBr](colorbrewer-palette-name.png)
+![Example of palette name in ColorBrewer, YlOrBr](image_files/colorbrewer-palette-name.png)
 
 To use these palettes, we replace the `rainbow()` function with the 
 `hcl.colors()` function, and indicate which palette we want through the 

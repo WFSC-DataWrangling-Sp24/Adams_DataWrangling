@@ -45,14 +45,37 @@ In this exercise, you will work with the same precipitation data as in class,
 but this time focus in on the Himalayan region of Asia.
 
 a. Load in the terra package. What version does it say you are using?
+```{r}
+install.packages("terra", repos = "https://cran.r-project.org/")
+library(terra)
+```
+ - terra 1.7.21
 
 b. Load in the precipitation data ("global_precipitation.tif"), what is the 
 EPSG used in these data?
+```{r}
+prec <- rast("image_files/global_precipitation.tif")
+prec
+```
+ - EPSG: 4326
+
 
 c. Define a geographic extent object for the Himalayan region.
 
+```{r}
+himalayan_ext <- ext(c(69, 97, 27, 40))
+```
+
+
 d. Crop the precipitation data to the Himalayan extent; what are resulting 
 dimensions?
+
+```{r}
+prec_him <- crop(prec, himalayan_ext)
+```
+
+ - 312 rows, 672 columns, 1 layer.
+
 
 ### 2. Printing maps (20 points)
 
@@ -61,13 +84,31 @@ the data.
 
 a. Plot the precipitation data for the Himalayan region.
 
+```{r}
+plot(prec_him)
+```
+
+
 b. Add a title to the plot.
+```{r}
+plot(prec_him, main = "Mean Annual Precipitation (mm)")
+```
+
 
 c. Change the palette to that of `topo.colors` (use `?topo.colors` for 
 details) and print the resultant plot.
 
+```{r}
+plot(prec_him, main = "Mean Annual Precipitation (mm)", col =topo.colors(n=50))
+```
+
+
 d. Change the palette to one from [ColorBrewer](https://colorbrewer2.org) for 
 sequential (continuous) data.
+```{r}
+plot(prec_him, main = "Mean Annual Precipitation (mm)", col = rev(hcl.colors(n=50, palette= "YlGnBu")))
+```
+
 
 ### 3. Working with vector data in terra (20 points)
 
@@ -75,26 +116,83 @@ a. Create a data frame of three peaks in the Himalayan region: (lat, lon)
   + K2: 35.93, 76.50
   + Annapurna: 28.53, 83.81
   + Mount Everest: 28.05, 86.91
+  
+```{r}
+peaks <- data.frame(name = c("K2", "Annapuna", "Mount Everest"),
+                     lat = c(35.93, 28.53, 28.05),
+                     lon = c(76.50, 83.81, 86.91))
+peaks
+```
+  
 
 b. Create a SpatVector object from the data frame with peak data.
+```{r}
+peaks_vect <- vect(peaks, crs = crs(prec_him))
+```
+
+
 
 c. Convert the points SpatVector object to a lines object.
 
+```{r}
+line <- as.lines(peaks_vect)
+```
+
+
 d. Add the lines object to the precipitation plot of the Himalayan region.
+```{r}
+plot(prec_him, main = "Mean Annual Precipitation (mm)", col = rev(hcl.colors(n=50, palette= "YlGnBu")))
+plot(line, add = TRUE)
+```
+
+
 
 ### 4. Modifying raster values (20 points)
 
 a. Load in the elevation data ("global_elevation.tif"), what are the units for 
 these data? 
 
+```{r}
+elev <- rast("image_files/global_elevation.tif")
+elev
+```
+
+ - Meters
+
+
+
 b. Convert the units of the raster to feet.
+```{r}
+elev_f <- elev * 3.281
+```
+
 
 c. Crop the elevation data to the same geographic extent as precipitation data.
 
+```{r}
+elev_him <- crop(elev_f, himalayan_ext)
+```
+
+
 d. Plot the Himalayan elevation data.
+
+```{r}
+plot(elev_him)
+```
+
 
 ### 5. Converting raster objects to spatial vector objects (20 points)
 
 For this last exercise, create a plot that shows precipitation for the 
 Himalayan region, using a color palette from ColorBrewer AND add a layer that 
 is partially (50%) transparent to shade out regions below 13,000 feet.
+
+```{r}
+elev_max <- 13000
+him_max <- elev_him < elev_max
+
+plot(prec_him, main = "Mean Annual Precipitation (mm)", col = rev(hcl.colors(n=50, palette= "YlGnBu")))
+plot(him_max, col = c("transparent", "black"),alpha=0.5, add=TRUE)
+
+```
+

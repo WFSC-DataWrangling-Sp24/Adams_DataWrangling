@@ -145,19 +145,53 @@ Write a function `mass_from_length()` that uses the equation `mass <- a * length
 
 ```{r}
 mass_from_length <- function(length, species) {
-  case_when(species == "Stegosauria" ~ mass <- 10.95 * length ^ 2.64,
-            species == "Theropoda" ~ mass <-  0.73 * length ^ 3.63,
-            species == "Sauropoda" ~ mass <-  214.44 * length ^ 1.46)
+  mass <- case_when(species == "Stegosauria" ~ 10.95 * length ^ 2.64,
+            species == "Theropoda" ~ 0.73 * length ^ 3.63,
+            species == "Sauropoda" ~ 214.44 * length ^ 1.46)
   return(mass)
 }
 
-mass_from
+mass_from_length(44, "Stegosauria")
 ```
 
 
 a.  Use this function and a for loop to calculate the estimated mass for each dinosaur, store the masses in a vector, and after all of the calculations are complete show the first few items in the vector using `head()`.
+
+```{r}
+
+##### I had a really hard time on this question, probably just from the long time since we covered this in class. I used Chat GPT to help on some parts of the question, hence the "seq_along" in the for loop.
+
+lengths <- c(10.44, 23, 3.45)
+species <- c("Stegosauria", "Theropoda", "Sauropoda")
+
+results_2a <- vector(mode = "numeric", length = length(lengths))
+
+
+for (i in seq_along(lengths)) {
+  length_i <- lengths[i]
+  for (j in seq_along(species)) {
+    species_j <- species[j]
+    est_mass <- mass_from_length(length_i, species_j)
+    results_2a[(i - 1) * length(species) + j] <- est_mass
+  }
+}
+
+head(results_2a)
+```
+
+
 b.  Add the results in the vector back to the original data frame. Show the first few rows of the data frame using `head()`.
+
+```{r}
+
+```
+
 c.  Calculate the mean mass for each `species` using `dplyr` (no `for` loops).
+
+```{r}
+
+```
+
 
 ### 3. Multi-file Analysis (40 pts)
 
@@ -169,15 +203,126 @@ Start your solution by:
 -   Unzip it using `unzip()`
 -   Obtain a list of all of the files with file names matching the pattern `"collar-data-.*.txt"` (using `list.files()`)
 
+```{r}
+download.file("http://www.datacarpentry.org/semester-biology/data/individual_collar_data.zip",
+              "../Assignments/data_raw/individual_collar_data.zip")
+
+unzip(zipfile = "../Assignments/data_raw/individual_collar_data.zip", exdir =  "../Assignments/data_raw")
+```
+
+```{r}
+list.files("../Assignments/data_raw")
+```
+
+```{r}
+data_files <- list.files(path = "../Assignments/data_raw",
+                         pattern = "collar-")
+```
+
 a.  Use a loop to load each of these files into R and make a line plot (using `geom_path()`) for each file with `long` on the `x` axis and `lat` on the `y` axis.
+
+```{r}
+num_files <- length(data_files)
+results <- vector(mode = "integer", length = num_files)
+```
+
+
+```{r}
+
+library(ggplot2)
+
+for (i in 1:num_files){
+  # specify the file
+  filename <- data_files[i]
+  # read in the text file
+  data <- read.csv(paste0("../Assignments/data_raw/", filename))
+  # make a plot
+  plot <- ggplot(data, aes(x= long, y = lat))+
+    geom_line()
+  plot
+}
+```
 
 Graphs, like other types of output, won't display inside a loop unless you explicitly display them, so you need put your `ggplot()` command inside a `print()` statement.
 
+```{r}
+for (i in 1:num_files){
+  # specify the file
+  filename <- data_files[i]
+  # read in the text file
+  data <- read.csv(paste0("../Assignments/data_raw/", filename))
+  # make a plot
+  plot <- print(ggplot(data, aes(x= long, y = lat))+
+    geom_line())
+  plot
+}
+```
+
+
 Include the name of the file in the graph as the graph title using the `ggtitle()`.
+
+```{r}
+for (i in 1:num_files){
+  # specify the file
+  filename <- data_files[i]
+  # read in the text file
+  data <- read.csv(paste0("../Assignments/data_raw/", filename))
+  # make a plot
+  plot <- print(ggplot(data, aes(x= long, y = lat))+
+    geom_line()+
+      ggtitle(filename))
+  plot
+}
+```
 
 b.  Add code to the loop to calculate the minimum and maximum latitude in the file, and store these values, along with the name of the file, in a data frame.
 
+```{r}
+
+results_3b <- data.frame(file_name = vector(mode = "character", length = num_files),
+                      max_lat = vector(mode = "numeric", length = num_files),
+                      min_lat = vector(mode = "numeric", length = num_files))
+
+for (i in 1:num_files){
+  # specify the file
+  filename <- data_files[i]
+  # read in the text file
+  data <- read.csv(paste0("../Assignments/data_raw/", filename))
+  # make a plot
+  print(ggplot(data, aes(x= long, y = lat))+
+    geom_line()+
+      ggtitle(filename))
+  
+  results_3b$file_name[i] <- filename
+  results_3b$max_lat[i] <- max(data$lat)
+  results_3b$min_lat[i] <- min(data$lat)
+  
+  print(results_3b)
+}
+```
+
+
 Show the data frame as output.
+```{r}
+for (i in 1:num_files){
+  # specify the file
+  filename <- data_files[i]
+  # read in the text file
+  data <- read.csv(paste0("../Assignments/data_raw/", filename))
+  # make a plot
+  #print(ggplot(data, aes(x= long, y = lat))+
+  #  geom_line()+
+  #    ggtitle(filename))
+  
+  results_3b$file_name[i] <- filename
+  results_3b$max_lat[i] <- max(data$lat)
+  results_3b$min_lat[i] <- min(data$lat)
+  
+  print(results_3b)
+}
+```
+
+
 
 # Reflection
 
