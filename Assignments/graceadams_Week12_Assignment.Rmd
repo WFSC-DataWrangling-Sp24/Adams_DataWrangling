@@ -147,7 +147,8 @@ Write a function `mass_from_length()` that uses the equation `mass <- a * length
 mass_from_length <- function(length, species) {
   mass <- case_when(species == "Stegosauria" ~ 10.95 * length ^ 2.64,
             species == "Theropoda" ~ 0.73 * length ^ 3.63,
-            species == "Sauropoda" ~ 214.44 * length ^ 1.46)
+            species == "Sauropoda" ~ 214.44 * length ^ 1.46,
+            TRUE ~ 25.37 * length ^ 2.49)
   return(mass)
 }
 
@@ -161,35 +162,33 @@ a.  Use this function and a for loop to calculate the estimated mass for each di
 
 ##### I had a really hard time on this question, probably just from the long time since we covered this in class. I used Chat GPT to help on some parts of the question, hence the "seq_along" in the for loop.
 
-lengths <- c(10.44, 23, 3.45)
-species <- c("Stegosauria", "Theropoda", "Sauropoda")
+results_2a <- vector(mode = "numeric", length = length(dinosaur_lengths$lengths))
 
-results_2a <- vector(mode = "numeric", length = length(lengths))
-
-
-for (i in seq_along(lengths)) {
-  length_i <- lengths[i]
-  for (j in seq_along(species)) {
-    species_j <- species[j]
-    est_mass <- mass_from_length(length_i, species_j)
-    results_2a[(i - 1) * length(species) + j] <- est_mass
-  }
+for(i in 1:nrow(dinosaur_lengths)){
+  est_mass <- mass_from_length(dinosaur_lengths$lengths[i], dinosaur_lengths$species[i])
+  results_2a[i] <- est_mass
 }
 
 head(results_2a)
+
 ```
 
 
 b.  Add the results in the vector back to the original data frame. Show the first few rows of the data frame using `head()`.
 
 ```{r}
-
+dinosaur_lengths$est_mass <- results_2a
+head(dinosaur_lengths)
 ```
 
 c.  Calculate the mean mass for each `species` using `dplyr` (no `for` loops).
 
 ```{r}
+mean_masses <- dinosaur_lengths %>%
+  group_by(species) %>%
+  summarise(mean_mass = mean(est_mass))
 
+mean_masses
 ```
 
 
@@ -237,7 +236,7 @@ for (i in 1:num_files){
   # read in the text file
   data <- read.csv(paste0("../Assignments/data_raw/", filename))
   # make a plot
-  plot <- ggplot(data, aes(x= long, y = lat))+
+  plot <- ggplot(data, aes(x= long, y= lat))+
     geom_line()
   plot
 }
@@ -252,7 +251,7 @@ for (i in 1:num_files){
   # read in the text file
   data <- read.csv(paste0("../Assignments/data_raw/", filename))
   # make a plot
-  plot <- print(ggplot(data, aes(x= long, y = lat))+
+  plot <- print(ggplot(data, aes(x= long, y= lat))+
     geom_line())
   plot
 }
@@ -335,4 +334,4 @@ Write about 5 sentences addressing *at least* one of the following questions.
 -   Is there anything that I can do to help your learning in the course?
 -   Other reflections about the content of the course that you would like to share.
 
-*Answer*:
+*Answer*: I have really enjoyed this course. I chatted with Ellen today about coding and learning data science skills in natural science majors and I think taking this course has benefited me immensely. Choosing to complete the Data Science & Visualization undergrad certificate in two semesters was not an easy choice to make but I am thankful I got to take this class and learn from Ellen. Coding has become one of my favorite subjects and things to do and I have used many things I've learned in this class in other applications already and I'm not even a graduate student with my own data. Overall, I'm thankful for Ellen and this class and how well it has been taught! Thank you!
