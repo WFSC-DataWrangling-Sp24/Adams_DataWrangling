@@ -159,9 +159,6 @@ mass_from_length(44, "Stegosauria")
 a.  Use this function and a for loop to calculate the estimated mass for each dinosaur, store the masses in a vector, and after all of the calculations are complete show the first few items in the vector using `head()`.
 
 ```{r}
-
-##### I had a really hard time on this question, probably just from the long time since we covered this in class. I used Chat GPT to help on some parts of the question, hence the "seq_along" in the for loop.
-
 results_2a <- vector(mode = "numeric", length = length(dinosaur_lengths$lengths))
 
 for(i in 1:nrow(dinosaur_lengths)){
